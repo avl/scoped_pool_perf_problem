@@ -55,7 +55,7 @@ pub fn test_bench_alt(b: &mut Bencher) {
 			        scope.execute(move || {
 						for sublot in sub {
 
-			        		assert!(*sublot!=32);
+			        		assert!(*sublot!=42);
 				        	
 			        	}
 					});
