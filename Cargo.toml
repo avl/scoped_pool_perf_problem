@@ -1,0 +1,8 @@
+[package]
+name = "scoped_pool_performance_problem"
+version = "0.1.0"
+authors = ["Anders Musikka <anders@andersmusikka.se>"]
+
+[dependencies]
+scoped-pool="*"
+
