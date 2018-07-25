@@ -16,12 +16,12 @@ pub fn test_bench_alt(b: &mut Bencher) {
 	
 	{
 		let mut data = Vec::new();
-		for i in 0..data_size {
+		for _ in 0..data_size {
 			data.push(0);
 		}
 
 		let mut output_data=Vec::<Vec<i32>>::new();
-		for i in 0..parallellism {
+		for _ in 0..parallellism {
 			let mut t = Vec::<i32>::with_capacity(data_size/parallellism);
 			output_data.push(t);
 		}
@@ -33,12 +33,12 @@ pub fn test_bench_alt(b: &mut Bencher) {
 			{
 
 				let mut output_data_ref=&mut output_data;
-                let dataref = &data;						
+                let data_ref = &data;						
 				pool.scoped(move |scope| {
 				
 					for (idx,output_data_bucket) in output_data_ref.iter_mut().enumerate() {						
 				        scope.execute(move || {					        
-				        	for item in &dataref[(idx*(data_size/parallellism))..((idx+1)*(data_size/parallellism))] { //Yes, this is a logic bug when parallellism does not evenely divide data_size. 
+				        	for item in &data_ref[(idx*(data_size/parallellism))..((idx+1)*(data_size/parallellism))] { //Yes, this is a logic bug when parallellism does not evenely divide data_size. I could use "chunks" to avoid this, but I wanted to keep this simple for this analysis.
 				        		output_data_bucket.push(*item);
 				        	}
 				        								        
