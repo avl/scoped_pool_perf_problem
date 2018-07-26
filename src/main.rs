@@ -1,5 +1,6 @@
 #![feature(test)]
 extern crate scoped_pool;
+extern crate rayon;
 extern crate test;
 use scoped_pool::Pool;
 use test::{Bencher};
@@ -9,10 +10,10 @@ use test::{Bencher};
 /// Why is this program twice as fast, when the number of threads is set to 1 instead of 2?
 #[bench]
 pub fn test_bench_alt(b: &mut Bencher) {
-	let parallellism = 1;
+	let parallellism = 2;
 	let data_size = 500_000;		
 	
-	let mut pool = Pool::new(parallellism);
+//	let mut pool = Pool::new(parallellism);
 	
 	{
 		let mut data = Vec::new();
@@ -34,10 +35,10 @@ pub fn test_bench_alt(b: &mut Bencher) {
 
 				let mut output_data_ref=&mut output_data;
                 let data_ref = &data;						
-				pool.scoped(move |scope| {
+				rayon::scope(move |scope| {
 				
 					for (idx,output_data_bucket) in output_data_ref.iter_mut().enumerate() {						
-				        scope.execute(move || {					        
+				        scope.spawn(move |_| {					        
 				        	for item in &data_ref[(idx*(data_size/parallellism))..((idx+1)*(data_size/parallellism))] { //Yes, this is a logic bug when parallellism does not evenely divide data_size. I could use "chunks" to avoid this, but I wanted to keep this simple for this analysis.
 				        		output_data_bucket.push(*item);
 				        	}
@@ -49,10 +50,10 @@ pub fn test_bench_alt(b: &mut Bencher) {
 				});
 			}
 			let mut output_data_ref=&mut output_data;
-			pool.scoped(move|scope|
+			rayon::scope(move|scope|
 				for sub in output_data_ref.iter_mut() {
 
-			        scope.execute(move || {
+			        scope.spawn(move |_| {
 						for sublot in sub {
 
 			        		assert!(*sublot!=42);
