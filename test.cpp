@@ -1,25 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
-#include <boost/move/move.hpp>
 #include <iostream>
-#include <unistd.h>
+#include <vector>
 #include <chrono>
-
 #include <sched.h>
 #include <atomic>
 
-       
-
+      
 
 #define PAR 1
 #define DATASIZE 524288
 
-namespace asio = boost::asio; 
 std::vector<std::vector<int>> output;
 std::vector<int> input;
 
@@ -43,12 +34,12 @@ int sleep_print2(int task) {
     auto& temp = output[task];
     auto temp_p = &output[task][0];
     auto temp_p2 = temp_p + DATASIZE/PAR;
-    int facit = task*(DATASIZE/PAR);
+    int expected = task*(DATASIZE/PAR);
     while(temp_p!=temp_p2) {
-        if (*temp_p!=facit)
+        if (*temp_p!=expected)
             printf("Woha!\n");
         temp_p+=1;
-        facit+=1;
+        expected+=1;
     }
 	return 0;
 }
@@ -79,8 +70,6 @@ void* threadfunc(void* p) {
     }
     
 }
-
-
 
 int main() {
 
