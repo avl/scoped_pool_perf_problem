@@ -15,7 +15,7 @@ std::vector<std::vector<int>> output;
 std::vector<int> input;
 
 
-int sleep_print1(int task) {
+int run_job1(int task) {
        
     int l = DATASIZE/PAR;
     int off = task*(DATASIZE/PAR);
@@ -30,7 +30,7 @@ int sleep_print1(int task) {
 }
 
 
-int sleep_print2(int task) {
+int run_job2(int task) {
     auto& temp = output[task];
     auto temp_p = &output[task][0];
     auto temp_p2 = temp_p + DATASIZE/PAR;
@@ -59,13 +59,13 @@ void* threadfunc(void* p) {
         while(valsync.load()!=expect) {
         }
         expect+=1;        
-        sleep_print1(i);
+        run_job1(i);
         valdone+=1;
         
         while(valsync.load()!=expect) {
         }
         expect+=1;        
-        sleep_print2(i);    
+        run_job2(i);    
         valdone+=1;
     }
     
